@@ -2,11 +2,7 @@ import { Eye, EyeClosed } from 'lucide-react';
 import { useState } from 'react';
 import { authStore } from '../../store/auth.store';
 const LoginPage = () => {
-  const {isLoggingIn,login} = authStore()
   const [typePassword, setTypePassword] = useState(false);
-  const logging = () => {
-    login()
-  }
   return (
     <>
       <div className="justify-center items-center h-screen grid grid-cols-2">
@@ -32,7 +28,6 @@ const LoginPage = () => {
               </span>
             </div>
             <div>
-              {isLoggingIn}
             </div>
           </div>
 
