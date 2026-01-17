@@ -1,49 +1,96 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
+
+const generateToken = (userId) => {
+    return jwt.sign({ _id: userId }, process.env.JSON_SECRET, { expiresIn: "7d" })
+}
 
 export const signUp = async (req, res) => {
-    const { fullName, userName, email, password } = req.body
+  const { fullName, userName, email, password } = req.body;
 
-    if ([fullName, userName, email, password].some(field => field?.trim === "")) {
-        res.status(204)
-        res.json("All fields Required")
-    }
-    if (await User.findOne({ email })) {
-        res.status()
-        res.json("User already Exist")
-    }
+  if ([fullName, userName, email, password].some(field => field?.trim === "")) {
+    return res.status(400).json("All fields Required");
+  }
 
-    const cryptPassword = await bcrypt.hash(password, 10);
+  if (await User.findOne({ email })) {
+    return res.status(409).json("User already Exist");
+  }
 
-    const newUser = await User.create({
-        fullName,
-        userName,
-        email,
-        password: cryptPassword
+  const cryptPassword = await bcrypt.hash(password, 10);
+
+  const newUser = await User.create({
+    fullName,
+    userName,
+    email,
+    password: cryptPassword
+  });
+
+  const data = await User.findById(newUser._id).select("-password");
+
+  const token = generateToken(newUser._id);
+
+  res
+    .cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000
     })
-
-    console.log(newUser);
-    const data = await User.find({ _id: newUser._id }).select("-password")
-    res.status(200).json(data)
-}
+    .status(200)
+    .json(data);
+};
 
 export const login = async (req, res) => {
+  const { email, password } = req.body;
 
-    const { email, password } = req.body
+  if ([email, password].some(field => field?.trim === "")) {
+    return res.status(400).json("All fields Required");
+  }
 
-    if ([email, password].some(field => field?.trim === "")) return res.status(204).json("All fields Required")
+  const existingUser = await User.findOne({ email });
 
-    const existingUser = await User.findOne({ email })
+  if (!existingUser) {
+    return res.status(400).json("Invalid Credentials");
+  }
 
-    if (!existingUser) {
-        res.status(400).json("Invalid Credentials")
-    }
-    const match = await bcrypt.compare(password, existingUser.password)
-    if (!match) {
-        res.status(400).json("InCorrect Password")
-    }
-    else {
-        const data = await User.findOne({ email }).select("-password")
-        res.status(200).json(data)
-    }
-}
+  const match = await bcrypt.compare(password, existingUser.password);
+
+  if (!match) {
+    return res.status(400).json("Incorrect Password");
+  }
+
+  const data = await User.findById(existingUser._id).select("-password");
+  const token = generateToken(existingUser._id);
+
+  res
+    .cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    })
+    .status(200)
+    .json(data);
+};
+
+
+export const logout = async (req, res) => {
+  res
+    .cookie("jwt", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production"
+    })
+    .status(200)
+    .json("Logout Successfully");
+};
+
+export const checkAuth = async (req, res) => {
+  try {
+    return res.status(200).json(req.user);
+  } catch (error) {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};

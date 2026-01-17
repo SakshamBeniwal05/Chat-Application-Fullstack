@@ -4,6 +4,7 @@ import mongoose from "mongoose"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import { userRouter } from "./routes/user.route.js"
+import { messageRouter } from "./routes/message.route.js"
 
 dotenv.config()
 const app = express()
@@ -15,6 +16,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(userRouter)
+app.use(messageRouter)
     ; (async () => {
         try {
             await mongoose.connect(process.env.MONGO_URL)

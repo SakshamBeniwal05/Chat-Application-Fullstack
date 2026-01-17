@@ -1,1 +1,48 @@
-import { Message } from "../models/message.model";
+import { Message } from "../models/message.model.js";
+import { User } from "../models/user.model.js";
+export const getOtherUsers = async (req, res) => {
+    try {
+        const currentUser = req.user._id
+        const allUsers = await User.find({ _id: { $ne: currentUser } }).select("-password")
+
+        res.status(200).json(allUsers)
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" })
+    }
+}
+
+export const sentMessage = async (req, res) => {
+    try {
+        const { message, photo } = req.body;
+        const { id: reciverId } = req.params;
+
+        const newMessage = await Message.create({
+            sender: req.user._id,
+            reciver: reciverId,
+            message,
+            photo
+        });
+
+        return res.status(201).json(newMessage);
+    } catch (error) {
+        res.status(500).json({error:"Internal Server Error"})
+    }
+}
+
+export const getMessage = async(req,res)=>{
+    try {
+        const {id: reciverId} = req.params
+        const myId = req.user._id;
+
+        const messages = await Message.find({
+            $or:[
+                {sender:myId, reciver:reciverId},
+                {sender:reciverId,reciver:myId}
+            ]
+        })
+        return res.status(200).json(messages);
+    }
+    catch (error) {
+        res.status(500).json({error:"Internal Server Error"})
+    }
+}

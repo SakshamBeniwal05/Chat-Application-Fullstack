@@ -1,5 +1,6 @@
 import { Router } from "express";
-import {signUp,login} from "../controller/user.controller.js"
+import {signUp,login,logout,checkAuth} from "../controller/user.controller.js"
+import { protectedRoute } from "../middleware/auth.middleware.js";
 
 export const userRouter = Router()
 
@@ -9,3 +10,5 @@ userRouter.get('/api/user',(req,res)=>{
 
 userRouter.post('/api/user/register',signUp)
 userRouter.post('/api/user/login',login)
+userRouter.post('/api/user/logout',logout)
+userRouter.get('/api/user/check',protectedRoute,checkAuth)
