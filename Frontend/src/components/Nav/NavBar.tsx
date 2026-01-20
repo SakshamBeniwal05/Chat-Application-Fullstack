@@ -27,7 +27,7 @@ const NavBar = () => {
             <button
               type="button"
               onClick={logout}
-              className="btn btn-sm bg-accent text-accent-content hover:bg-accent/80 rounded-b-full"
+              className="btn btn-sm bg-accent text-accent-content hover:bg-accent/80 rounded-full"
             >
               <LogOut size={18} />
             </button>
