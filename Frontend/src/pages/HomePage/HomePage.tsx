@@ -30,7 +30,7 @@ const HomePage = () => {
                                         ? "bg-accent text-accent-content"
                                         : "hover:bg-base-300"
                                     }`}>
-                                <Link to={`/${user._id}`}>
+                                <Link to={`${user._id}`}>
                                     {user.userName}
                                 </Link>
                             </div>
