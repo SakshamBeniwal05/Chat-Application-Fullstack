@@ -1,76 +1,174 @@
-import React, { useEffect } from 'react'
 import { messageStore } from '../../store/messageStore'
-import toast from 'react-hot-toast'
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { authStore } from '../../store/auth.store'
+import { Send } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const HomePage = () => {
-    const { getUsers, getMessages, otherUsers, chatMessages, selectedUserId, setSelectedUser, isUserSearching, isMessageCollecting } = messageStore()
+    const {
+        isUserSearching,
+        isMessageCollecting,
+        otherUsers,
+        chatMessages,
+        getUsers,
+        getMessages,
+        defaultProfile,
+        sentMessage,
+        setCurrentReciever,
+        currentReciver,
+    } = messageStore()
 
+    const { authUser } = authStore()
+    const { register, handleSubmit } = useForm()
+    const navigate = useNavigate()
+    const { slug } = useParams()
+
+    /* ✅ Fetch users once */
     useEffect(() => {
         getUsers()
-    }, [])
-    console.log(otherUsers);
+    }, [getUsers])
+
+    /* ✅ Sync receiver + messages from URL */
+    useEffect(() => {
+        if (!slug || !otherUsers.length) return
+
+        const found = otherUsers.find((u: any) => u._id === slug)
+        if (!found) return
+
+        if (currentReciver?._id !== slug) {
+            setCurrentReciever(found)
+        }
+
+        getMessages(slug)
+    }, [slug, otherUsers, currentReciver, getMessages, setCurrentReciever])
 
     return (
-        <div className="flex h-screen bg-base-100">
-            {/* sidebar */}
-            <div className="w-1/3 bg-base-200 border-r border-base-300 overflow-y-auto">
-                <div className="p-4">
-                    <h2 className="text-xl font-bold mb-4">Users</h2>
-                    {isUserSearching ? (
-                        <div className="flex justify-center py-4">
-                            <span className="loading loading-spinner loading-md"></span>
-                        </div>
-                    ) : otherUsers && otherUsers.length > 0 ? (
-                        otherUsers.map((user: any) => (
-                            <div
-                                key={user._id}
-                                onClick={() => setSelectedUser(user._id)}
-                                className={`p-3 rounded cursor-pointer transition ${selectedUserId === user._id
-                                        ? "bg-accent text-accent-content"
-                                        : "hover:bg-base-300"
-                                    }`}>
-                                <Link to={`${user._id}`}>
-                                    {user.userName}
-                                </Link>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-gray-500">No users found</p>
-                    )}
-                </div>
-            </div>
+        <div className="flex">
 
-            {/* chat area */}
-            <div className="w-2/3 flex flex-col">
-                {selectedUserId ? (
+            {/* ================= Sidebar ================= */}
+            <div className="w-1/5 bg-primary rounded-2xl m-3 p-2 min-h-[90vh]">
+                {isUserSearching ? (
                     <>
-                        <div className="flex-1 overflow-y-auto p-4 bg-base-100">
-                            {isMessageCollecting ? (
-                                <div className="flex justify-center items-center h-full">
-                                    <span className="loading loading-spinner loading-md"></span>
+                        {Array.from({ length: 7 }).map((_, i) => (
+                            <div key={i} className="flex gap-5 p-10 rounded-2xl">
+                                <div className="skeleton size-10 rounded-box" />
+                                <div className="flex flex-col gap-2">
+                                    <div className="skeleton h-4 w-28" />
+                                    <div className="skeleton h-3 w-20 opacity-70" />
                                 </div>
-                            ) : chatMessages && chatMessages.length > 0 ? (
-                                chatMessages.map((msg: any) => (
-                                    <div key={msg._id} className="mb-4 p-2 bg-base-200 rounded">
-                                        <p className="text-sm">{msg.message}</p>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-gray-500">No messages yet</p>
-                            )}
-                        </div>
-                        <div className="p-4 border-t border-base-300">
-                            <input
-                                type="text"
-                                placeholder="Type a message..."
-                                className="input input-bordered w-full"
-                            />
-                        </div>
+                            </div>
+                        ))}
                     </>
                 ) : (
-                    <div className="flex items-center justify-center h-full text-xl text-gray-500">
-                        Select a user to start chatting
+                    otherUsers.map((user) => (
+                        <button
+                            key={user._id}
+                            type="button"
+                            className="w-full text-left"
+                            onClick={() => {
+                                setCurrentReciever(user)
+                                navigate(`/${user._id}`)
+                            }}
+                        >
+                            <div className="flex gap-5 p-5 rounded-2xl hover:bg-secondary font-bold">
+                                <img
+                                    className="size-10 rounded-box"
+                                    src={user.profilePic ?? defaultProfile}
+                                />
+                                <div>
+                                    <div>{user.userName}</div>
+                                    <div className="text-xs uppercase font-semibold opacity-60">
+                                        {user.fullName}
+                                    </div>
+                                </div>
+                            </div>
+                        </button>
+                    ))
+                )}
+            </div>
+
+            {/* ================= Chat ================= */}
+            <div className="flex-1 m-3">
+
+                {isMessageCollecting ? (
+                    <div className="flex flex-col gap-4">
+                        {[48, 64, 40].map((w, i) => (
+                            <div key={i} className="chat chat-start">
+                                <div className="chat-bubble">
+                                    <div className={`skeleton h-4 w-${w}`} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : chatMessages === null ? (
+                    <div className="flex justify-center items-center h-screen">
+                        Select user to Message
+                    </div>
+                ) : (
+                    <div className="flex flex-col h-[90vh]">
+
+                        {/* Header */}
+                        <div className="flex gap-5 p-5 font-bold">
+                            <img
+                                className="size-10 rounded-box"
+                                src={currentReciver?.profilePic ?? defaultProfile}
+                            />
+                            <div>
+                                <div>{currentReciver?.userName}</div>
+                                <div className="text-xs uppercase opacity-60">
+                                    {currentReciver?.fullName}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Messages */}
+                        <div className="flex-1 overflow-y-auto">
+                            {chatMessages.map((each: any) => (
+                                <div
+                                    key={each._id}
+                                    className={`chat ${
+                                        each.sender === authUser._id
+                                            ? 'chat-end'
+                                            : 'chat-start'
+                                    }`}
+                                >
+                                    <div className="chat-bubble chat-bubble-primary">
+                                        {each.message || each.photo}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Input */}
+                        <form
+                            onSubmit={handleSubmit((data) =>
+                                sentMessage(currentReciver?._id, data)
+                            )}
+                            className="p-3"
+                        >
+                            <div className="flex items-end gap-3 bg-primary rounded-2xl p-3">
+                                <textarea
+                                    rows={1}
+                                    className="w-full resize-none bg-transparent focus:outline-none max-h-40"
+                                    {...register('message')}
+                                    onInput={(e) => {
+                                        const t = e.currentTarget
+                                        t.style.height = 'auto'
+                                        t.style.height = `${t.scrollHeight}px`
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault()
+                                            e.currentTarget.form?.requestSubmit()
+                                        }
+                                    }}
+                                />
+                                <button className="btn btn-circle btn-primary">
+                                    <Send />
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 )}
             </div>
