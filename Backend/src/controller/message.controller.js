@@ -1,5 +1,7 @@
 import { Message } from "../models/message.model.js";
 import { User } from "../models/user.model.js";
+import { getSocketId  } from "../utils/socket.js";
+import { io } from "../utils/socket.js";
 
 export const getOtherUsers = async (req, res) => {
     try {
@@ -15,6 +17,11 @@ export const sentMessage = async (req, res) => {
     try {
         const { message, photo } = req.body;
         const { id: reciverId } = req.params;
+
+        // const reciverSocketId = getSocketId(reciverId)
+        // if(reciverSocketId){
+        //     io.to(reciverSocketId).emit("message",message)
+        // }
 
         const newMessage = await Message.create({
             sender: req.user._id,

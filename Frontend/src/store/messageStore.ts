@@ -1,8 +1,9 @@
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { axiosInstance } from "../apis/axions.api";
+import { authStore } from "./auth.store";
 
-export const messageStore = create((set) => ({
+export const messageStore = create((set, get) => ({
     isUserSearching: false,
     isMessageCollecting: false,
     isSendingMessage: false,
@@ -24,10 +25,10 @@ export const messageStore = create((set) => ({
             set({ isUserSearching: false })
         }
     },
-    setCurrentReciever: (user)=>{
+    setCurrentReciever: (user) => {
         set({ currentReciver: user, currentReciverId: user?._id ?? null })
     },
-    getMessages: async (id:string) => {
+    getMessages: async (id: string) => {
         set({ isMessageCollecting: true })
         try {
             const res = await axiosInstance.get(`/message/${id}`)
@@ -40,12 +41,20 @@ export const messageStore = create((set) => ({
             set({ isMessageCollecting: false })
         }
     },
-    sentMessage: async (id:string,data: any) => {
+    sentMessage: async (id: string, data: any) => {
         set({ isSendingMessage: true })
         try {
             await axiosInstance.post(`/message/${id}`, data)
         } catch (error) {
             toast.error('Cant Send Message')
         }
+    },
+
+    liveMessages: () => {
+        const socket = authStore.getState().socket;
+        socket.on("message", (message) => {
+            if (get().currentReciverId !== message._id) return 1;
+            set({ chatMessages: [...get().chatMessages, message] })
+        })
     }
 }))

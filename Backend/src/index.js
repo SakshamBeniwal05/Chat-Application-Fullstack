@@ -1,15 +1,16 @@
-import express from "express"
+import { app, io, server } from "./utils/socket.js"
 import dotenv from "dotenv"
 import mongoose from "mongoose"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import { userRouter } from "./routes/user.route.js"
 import { messageRouter } from "./routes/message.route.js"
+import express from "express"
 
 dotenv.config()
-const app = express()
+
 app.use(cors({
-    origin:process.env.CORS_ENV,
+    origin: process.env.CORS_ENV,
     credentials: true
 }))
 app.use(express.json())
@@ -23,7 +24,7 @@ app.use(messageRouter)
             app.get("/", (req, res) => {
                 res.send("<h1>Server started</h1>")
             })
-            app.listen(process.env.PORT)
+            server.listen(process.env.PORT)
         } catch (error) {
             console.log(error);
         }

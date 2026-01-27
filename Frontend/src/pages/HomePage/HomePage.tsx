@@ -19,7 +19,7 @@ const HomePage = () => {
         currentReciver,
     } = messageStore()
 
-    const { authUser } = authStore()
+    const { authUser,onlineUsers,connectSocket } = authStore()
     const { register, handleSubmit } = useForm()
     const navigate = useNavigate()
     const { slug } = useParams()
@@ -27,7 +27,8 @@ const HomePage = () => {
     /* ✅ Fetch users once */
     useEffect(() => {
         getUsers()
-    }, [getUsers])
+        console.log(onlineUsers);
+    }, [getUsers,connectSocket])
 
     /* ✅ Sync receiver + messages from URL */
     useEffect(() => {
@@ -60,9 +61,11 @@ const HomePage = () => {
                             </div>
                         ))}
                     </>
-                ) : (
-                    otherUsers.map((user) => (
-                        <button
+                ) :  (
+                    <div>
+                        <div className='flex justify-center text-xl font-semibold text-secondary-content p-2'>Currently Online Users {onlineUsers.length - 1} </div>
+                        {otherUsers.map((user) => (
+                            <button
                             key={user._id}
                             type="button"
                             className="w-full text-left"
@@ -76,15 +79,17 @@ const HomePage = () => {
                                     className="size-10 rounded-box"
                                     src={user.profilePic ?? defaultProfile}
                                 />
+                                        {onlineUsers.includes(user._id)&& (<span className='relative right-8 top-7 size-3 bg-green-300 rounded-full ring-2 ring-zinc-900'></span>)}
                                 <div>
                                     <div>{user.userName}</div>
                                     <div className="text-xs uppercase font-semibold opacity-60">
                                         {user.fullName}
                                     </div>
                                 </div>
-                            </div>
+                            </div>  
                         </button>
-                    ))
+                    ))}
+                    </div>
                 )}
             </div>
 
@@ -142,8 +147,9 @@ const HomePage = () => {
 
                         {/* Input */}
                         <form
-                            onSubmit={handleSubmit((data) =>
+                            onSubmit={handleSubmit((data) => 
                                 sentMessage(currentReciver?._id, data)
+                                
                             )}
                             className="p-3"
                         >
