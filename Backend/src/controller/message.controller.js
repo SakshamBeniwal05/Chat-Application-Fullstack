@@ -1,7 +1,6 @@
 import { Message } from "../models/message.model.js";
 import { User } from "../models/user.model.js";
-import { getSocketId  } from "../utils/socket.js";
-import { io } from "../utils/socket.js";
+import { getSocketId, io } from "../utils/socket.js";
 
 export const getOtherUsers = async (req, res) => {
     try {
@@ -18,11 +17,6 @@ export const sentMessage = async (req, res) => {
         const { message, photo } = req.body;
         const { id: reciverId } = req.params;
 
-        // const reciverSocketId = getSocketId(reciverId)
-        // if(reciverSocketId){
-        //     io.to(reciverSocketId).emit("message",message)
-        // }
-
         const newMessage = await Message.create({
             sender: req.user._id,
             reciver: reciverId,
@@ -30,26 +24,33 @@ export const sentMessage = async (req, res) => {
             photo
         });
 
+        const reciverSocketId = getSocketId(reciverId)
+        if (reciverSocketId) {
+            io.to(reciverSocketId).emit("newMessage", newMessage)
+        }
+
         return res.status(201).json(newMessage);
+
     } catch (error) {
-        res.status(500).json({error:"Internal Server Error"})
+        console.error("Send message error:", error)
+        res.status(500).json({ error: "Internal Server Error" })
     }
 }
 
-export const getMessage = async(req,res)=>{
+export const getMessage = async (req, res) => {
     try {
-        const {id: reciverId} = req.params
+        const { id: reciverId } = req.params
         const myId = req.user._id;
 
         const messages = await Message.find({
-            $or:[
-                {sender:myId, reciver:reciverId},
-                {sender:reciverId,reciver:myId}
+            $or: [
+                { sender: myId, reciver: reciverId },
+                { sender: reciverId, reciver: myId }
             ]
         })
         return res.status(200).json(messages);
     }
     catch (error) {
-        res.status(500).json({error:"Internal Server Error"})
+        res.status(500).json({ error: "Internal Server Error" })
     }
 }

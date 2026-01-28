@@ -1,4 +1,4 @@
-import { app, io, server } from "./utils/socket.js"
+import { app, server } from "./utils/socket.js"
 import dotenv from "dotenv"
 import mongoose from "mongoose"
 import cors from "cors"
