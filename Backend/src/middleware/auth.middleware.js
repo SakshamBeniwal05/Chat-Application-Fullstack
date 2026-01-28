@@ -24,7 +24,8 @@ export const protectedRoute = async (req, res, next) => {
     req.user = currentUser;
 
     next();
-  } catch (err) {
+  }
+  catch (err) {
     return res.status(401).json("Invalid or expired token");
   }
 };

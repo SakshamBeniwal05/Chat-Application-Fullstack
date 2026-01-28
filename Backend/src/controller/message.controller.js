@@ -35,7 +35,7 @@ export const sentMessage = async (req, res) => {
         console.error("Send message error:", error)
         res.status(500).json({ error: "Internal Server Error" })
     }
-}
+}   
 
 export const getMessage = async (req, res) => {
     try {

@@ -25,9 +25,11 @@ export const messageStore = create((set, get) => ({
             set({ isUserSearching: false })
         }
     },
+
     setCurrentReciever: (user) => {
         set({ currentReciver: user, currentReciverId: user?._id ?? null })
     },
+    
     getMessages: async (id: string) => {
         set({ isMessageCollecting: true })
         try {
@@ -42,27 +44,27 @@ export const messageStore = create((set, get) => ({
         }
     },
     sentMessage: async (id: string, data: any) => {
-    set({ isSendingMessage: true })
-    try {
-        const res = await axiosInstance.post(`/message/${id}`, data)
-        
-        // ✅ Add message to sender's chat immediately
-        set((state) => ({
-            chatMessages: state.chatMessages 
-                ? [...state.chatMessages, res.data] 
-                : [res.data]
-        }))
-        
-        toast.success("Message sent!")
-        return true // ✅ Return success to reset form
-    } catch (error) {
-        console.error(error)
-        toast.error('Can\'t Send Message')
-        return false
-    } finally {
-        set({ isSendingMessage: false })
-    }
-},
+        set({ isSendingMessage: true })
+        try {
+            const res = await axiosInstance.post(`/message/${id}`, data)
+
+            // ✅ Add message to sender's chat immediately
+            set((state) => ({
+                chatMessages: state.chatMessages
+                    ? [...state.chatMessages, res.data]
+                    : [res.data]
+            }))
+
+            toast.success("Message sent!")
+            return true // ✅ Return success to reset form
+        } catch (error) {
+            console.error(error)
+            toast.error('Can\'t Send Message')
+            return false
+        } finally {
+            set({ isSendingMessage: false })
+        }
+    },
 
     liveMessages: () => {
         const socket = authStore.getState().socket;

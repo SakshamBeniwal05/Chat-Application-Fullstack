@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
 })
 
 export function getSocketId (userId) {
-    return socketMap[userId]
+    return socketMap[ userId]
 }
 
 export { app, server, io } 

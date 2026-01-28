@@ -3,8 +3,9 @@ import NavBar from "./components/Nav/NavBar"
 import { themeStore } from "./store/themeStore"
 import { authStore } from "./store/auth.store"
 import { useEffect } from "react"
-function App() {
 
+function App() {
+  
   const { currentTheme } = themeStore()
   const { authUser, connectSocket } = authStore()
   
