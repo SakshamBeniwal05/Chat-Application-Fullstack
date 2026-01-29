@@ -1,5 +1,6 @@
 import { Message } from "../models/message.model.js";
 import { User } from "../models/user.model.js";
+import { cloudinaryUploader } from "../utils/cloudinary.js";
 import { getSocketId, io } from "../utils/socket.js";
 
 export const getOtherUsers = async (req, res) => {
@@ -17,11 +18,13 @@ export const sentMessage = async (req, res) => {
         const { message, photo } = req.body;
         const { id: reciverId } = req.params;
 
+        const photoURL = await cloudinaryUploader(photo)
+
         const newMessage = await Message.create({
             sender: req.user._id,
             reciver: reciverId,
             message,
-            photo
+            photo: photoURL,
         });
 
         const reciverSocketId = getSocketId(reciverId)
@@ -35,7 +38,7 @@ export const sentMessage = async (req, res) => {
         console.error("Send message error:", error)
         res.status(500).json({ error: "Internal Server Error" })
     }
-}   
+}
 
 export const getMessage = async (req, res) => {
     try {

@@ -3,7 +3,7 @@ import { axiosInstance } from "../apis/axions.api";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BackEND = "http://localhost:8000/";
+const BackEND = process.env.NODE_ENV ? "http://localhost:8000/" : "/";
 
 export const authStore = create((set, get) => ({
     authUser: null,

@@ -1,6 +1,7 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import { cloudinaryUpdateProfile, cloudinaryUploader } from "../utils/cloudinary.js";
 
 const generateToken = (userId) => {
   return jwt.sign({ _id: userId }, process.env.JSON_SECRET, { expiresIn: "7d" })
@@ -77,7 +78,7 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   res
-    .cookie("jwt", "", {
+    .x("jwt", "", {
       httpOnly: true,
       expires: new Date(0),
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -87,10 +88,34 @@ export const logout = async (req, res) => {
     .json("Logout Successfully");
 };
 
+export const updateProfile = async (req, res) => {
+  try {
+    const { file } = req.body;
+    const userId = req.user._id
+    const profilePic = req.user.profilePic
+
+    const newProfile = (!profilePic || profilePic == "") ? await cloudinaryUploader(file) : await cloudinaryUpdateProfile(profilePic, file)
+
+    const response = await User.findOneAndUpdate(userId, { profilePic: newProfile }, { new: true })
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      profilePic: updatedUser.profilePic
+    });
+
+  } catch (error) {
+    console.error("Update profile error:", error);
+    return res.status(500).json({
+      message: "Failed to update profile",
+      error: error.message
+    });
+  }
+}
+
 export const checkAuth = async (req, res) => {
   try {
     return res.status(200).json(req.user);
   } catch (error) {
     return res.status(500).json({ message: "Internal Server Error" });
   }
-};
+};  
