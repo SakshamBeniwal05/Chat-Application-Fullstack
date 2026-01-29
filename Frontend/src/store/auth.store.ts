@@ -10,8 +10,9 @@ export const authStore = create((set, get) => ({
     isLoggingIn: false,
     isSignningUp: false,
     isCheckingAuth: false,
+    isUpdatingProfile: false,
     socket: null,
-    onlineUsers: {},
+    onlineUsers: "",
 
     checkUser: async () => {
         set({ isCheckingAuth: true })
@@ -75,6 +76,32 @@ export const authStore = create((set, get) => ({
 
         }
     },
+    updateProfile: async (photo) => {
+    set({ isUpdatingProfile: true })
+    try {
+        if (!photo) return toast.error("No photo provided")
+        
+        const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(photo);
+        });
+        
+        await axiosInstance.post("/user/updateProfile", { file: base64 })
+        
+        const data = await get().checkUser()
+        set({ authUser: data })
+        
+        toast.success("Profile updated successfully")
+    } catch (error) {
+        console.error("Update profile error:", error);
+        toast.error(error.response?.data?.message || 'Failed to update profile')
+    }
+    finally {
+        set({ isUpdatingProfile: false })
+    }
+},
     connectSocket: () => {
         const { authUser, socket } = get()
         if (!authUser || socket) return;

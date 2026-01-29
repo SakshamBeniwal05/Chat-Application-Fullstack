@@ -4,6 +4,7 @@ import { authStore } from '../../store/auth.store'
 import { Send, Users, MessageSquare } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { Paperclip } from 'lucide-react';
 
 const HomePage = () => {
     const {
@@ -61,7 +62,7 @@ const HomePage = () => {
             <div className="flex items-center justify-center">
                 <div className="bg-base-100 rounded-lg shadow-xl w-full max-w-full h-[calc(100vh-4rem)]">
                     <div className="flex h-full rounded-lg overflow-hidden">
-                        
+
                         {/* ================= Sidebar ================= */}
                         <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
                             <div className="border-b border-base-300 w-full p-5">
@@ -69,7 +70,7 @@ const HomePage = () => {
                                     <Users className="size-6" />
                                     <span className="font-medium hidden lg:block">Contacts</span>
                                 </div>
-                                
+
                                 <div className="mt-3 hidden lg:flex items-center gap-2">
                                     <label className="cursor-pointer flex items-center gap-2">
                                         <input
@@ -122,7 +123,7 @@ const HomePage = () => {
                                                         <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
                                                     )}
                                                 </div>
-                                                
+
                                                 <div className="hidden lg:block text-left min-w-0">
                                                     <div className="font-medium truncate">{user.userName}</div>
                                                     <div className="text-sm text-zinc-400">
@@ -193,9 +194,8 @@ const HomePage = () => {
                                         {chatMessages?.map((each: any) => (
                                             <div
                                                 key={each._id}
-                                                className={`chat ${
-                                                    each.sender === authUser._id ? 'chat-end' : 'chat-start'
-                                                }`}
+                                                className={`chat ${each.sender === authUser._id ? 'chat-end' : 'chat-start'
+                                                    }`}
                                             >
                                                 <div className="chat-image avatar">
                                                     <div className="size-10 rounded-full border">
@@ -214,7 +214,7 @@ const HomePage = () => {
                                                         <img
                                                             src={each.photo}
                                                             alt="Attachment"
-                                                            className="sm:max-w-[200px] rounded-md mb-2"
+                                                            className="sm:max-w-[20rem] rounded-md mb-2"
                                                         />
                                                     )}
                                                     {each.message && <p>{each.message}</p>}
@@ -252,9 +252,18 @@ const HomePage = () => {
                                                     }
                                                 }}
                                             />
-                                            <button 
-                                                type="submit"
+                                            <button
+                                                type="button"
                                                 className="btn btn-circle btn-primary"
+                                            >
+
+                                                <Paperclip className='size-5' onClick={() => document.getElementById("photoUploader")?.click()} />
+                                            </button>
+                                            <input type="file" className='hidden' id="photoUploader"  {...register('photo')} />
+
+                                            <button
+                                                type="submit"
+                                                className="btn btn-circle btn-primary "
                                             >
                                                 <Send className="size-5" />
                                             </button>

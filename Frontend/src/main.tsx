@@ -8,6 +8,7 @@ import SettingPage from './pages/SettingPage/SettingPage.tsx'
 import HomePage from './pages/HomePage/HomePage.tsx'
 import { ProtectedRoute } from './components/ProtectedRoute.tsx'
 import { UnProtectedRoute } from './components/unProtectedRoute.tsx'
+import ProfilePage from './pages/Profile/Profile.tsx'
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,11 @@ const router = createBrowserRouter([
           {
             path: ":slug",
             element: <HomePage />
+          },
+          {
+            path: "/profile",
+            element: <ProfilePage/>
+
           },
         ],
       },

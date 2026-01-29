@@ -77,13 +77,12 @@ export const login = async (req, res) => {
 
 
 export const logout = async (req, res) => {
-  res
-    .x("jwt", "", {
-      httpOnly: true,
-      expires: new Date(0),
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "production"
-    })
+  res.cookie("jwt", "", {
+    httpOnly: true,
+    expires: new Date(0),
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production"
+  })
     .status(200)
     .json("Logout Successfully");
 };
@@ -91,16 +90,23 @@ export const logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { file } = req.body;
-    const userId = req.user._id
-    const profilePic = req.user.profilePic
+    const userId = req.user._id;
+    const profilePic = req.user.profilePic;
 
-    const newProfile = (!profilePic || profilePic == "") ? await cloudinaryUploader(file) : await cloudinaryUpdateProfile(profilePic, file)
+    const newProfile = (!profilePic || profilePic === "")
+      ? await cloudinaryUploader(file)
+      : await cloudinaryUpdateProfile(profilePic, file);
 
-    const response = await User.findOneAndUpdate(userId, { profilePic: newProfile }, { new: true })
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: newProfile },
+      { new: true }
+    ).select("-password")
 
     return res.status(200).json({
       message: "Profile updated successfully",
-      profilePic: updatedUser.profilePic
+      profilePic: updatedUser.profilePic,
+      user: updatedUser 
     });
 
   } catch (error) {
@@ -111,7 +117,6 @@ export const updateProfile = async (req, res) => {
     });
   }
 }
-
 export const checkAuth = async (req, res) => {
   try {
     return res.status(200).json(req.user);
