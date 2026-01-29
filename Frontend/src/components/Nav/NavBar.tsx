@@ -1,4 +1,3 @@
-import { Toaster } from "react-hot-toast";
 import { authStore } from "../../store/auth.store";
 import { Settings, LogOut, Contact } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -6,8 +5,7 @@ import { Link } from "react-router-dom";
 const NavBar = () => {
   const { authUser, logout } = authStore();
   return (
-    <>
-      <Toaster />
+    <> 
 
       <nav className="w-full bg-primary px-6 py-3 flex items-center justify-between">
 

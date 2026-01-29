@@ -89,26 +89,12 @@ export const logout = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { file } = req.body;
-    const userId = req.user._id;
-    const profilePic = req.user.profilePic;
-
-    const newProfile = (!profilePic || profilePic === "")
-      ? await cloudinaryUploader(file)
-      : await cloudinaryUpdateProfile(profilePic, file);
-
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { profilePic: newProfile },
-      { new: true }
-    ).select("-password")
-
-    return res.status(200).json({
-      message: "Profile updated successfully",
-      profilePic: updatedUser.profilePic,
-      user: updatedUser 
-    });
-
+    const { file } = req.body
+    const profilePic = req.user.profilePic
+    const newProfilePic = (!profilePic || profilePic === "") ? await cloudinaryUploader(file) : await cloudinaryUpdateProfile(profilePic, file)
+    console.log(newProfilePic)
+    await User.findByIdAndUpdate(req.user._id, { profilePic: newProfilePic.url }, { new: true });
+    get().checkAuth()
   } catch (error) {
     console.error("Update profile error:", error);
     return res.status(500).json({
@@ -117,6 +103,7 @@ export const updateProfile = async (req, res) => {
     });
   }
 }
+
 export const checkAuth = async (req, res) => {
   try {
     return res.status(200).json(req.user);

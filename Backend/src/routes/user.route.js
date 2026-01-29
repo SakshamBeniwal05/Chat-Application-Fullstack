@@ -11,5 +11,5 @@ userRouter.get('/api/user',(req,res)=>{
 userRouter.post('/api/user/register',signUp)
 userRouter.post('/api/user/login',login)
 userRouter.get('/api/user/logout',logout)
-userRouter.post('/api/user/updateProfile',updateProfile)
+userRouter.post('/api/user/updateProfile',protectedRoute,updateProfile)
 userRouter.get('/api/user/check',protectedRoute,checkAuth)

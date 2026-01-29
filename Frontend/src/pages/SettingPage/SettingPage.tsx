@@ -1,4 +1,3 @@
-import { Toaster } from "react-hot-toast"
 import { themeStore } from "../../store/themeStore"
 import { Themes } from "../../utils/Themes"
 
@@ -7,7 +6,6 @@ const SettingPage = () => {
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
-      <Toaster/>
       <div className="text-left mb-8">
         <div className="text-4xl font-bold mb-2">
           Theme

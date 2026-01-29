@@ -2,7 +2,6 @@ import { Eye, EyeClosed } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from "react-hook-form"
 import { authStore } from '../../store/auth.store';
-import { Toaster } from 'react-hot-toast';
 
 const LoginPage = () => {
   const [typePassword, setTypePassword] = useState(false);
@@ -37,7 +36,6 @@ const LoginPage = () => {
                 <button type='submit' disabled={isLoggingIn} className={`bg-accent w-76 p-2 rounded-3xl font-bold active:scale-95 active:bg-accent/75 disabled:bg-accent/70 disabled:text-white/80 disabled:scale-100`}>
                   {isLoggingIn ? "Loginning" : "Login"}
                 </button>
-                <Toaster/>
               </div>
             </div>
           </form>

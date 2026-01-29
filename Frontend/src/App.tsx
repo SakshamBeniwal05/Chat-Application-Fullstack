@@ -3,7 +3,7 @@ import NavBar from "./components/Nav/NavBar"
 import { themeStore } from "./store/themeStore"
 import { authStore } from "./store/auth.store"
 import { useEffect } from "react"
-
+import { Toaster } from "react-hot-toast"
 function App() {
   
   const { currentTheme } = themeStore()
@@ -21,6 +21,7 @@ function App() {
   
   return (
     <div data-theme="Cyberpunk">
+      <Toaster/>
       <NavBar />
       <Outlet />
     </div>
