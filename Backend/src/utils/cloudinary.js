@@ -1,13 +1,16 @@
 import { v2 as cloudinary } from "cloudinary"
 
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-})
+const initializeCloudinary = async () => {
+    await cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+    })
+}
 
 export const cloudinaryUploader = async (file) => {
     try {
+        await initializeCloudinary()
         const response = await cloudinary.uploader.upload(file, { resource_type: "auto" })
         return response
     } catch (error) {
@@ -17,6 +20,7 @@ export const cloudinaryUploader = async (file) => {
 
 export const cloudinaryUpdateProfile = async (oldUrl, newfile) => {
     try {
+        await initializeCloudinary()
         function extractor(url) {
             const cleanUrl = url.replace(/^https?:\/\//, "");
             const array = cleanUrl.split("/")

@@ -94,7 +94,6 @@ export const updateProfile = async (req, res) => {
     const newProfilePic = (!profilePic || profilePic === "") ? await cloudinaryUploader(file) : await cloudinaryUpdateProfile(profilePic, file)
     console.log(newProfilePic)
     await User.findByIdAndUpdate(req.user._id, { profilePic: newProfilePic.url }, { new: true });
-    get().checkAuth()
   } catch (error) {
     console.error("Update profile error:", error);
     return res.status(500).json({

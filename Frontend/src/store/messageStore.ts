@@ -18,8 +18,34 @@ export const messageStore = create((set, get) => ({
         try {
             const res = await axiosInstance.get('/message/getUsers')
             set({ otherUsers: res.data })
-        } catch (error) {
-            toast.error("Can't Find Users")
+        } catch (error: any) {
+            console.error(error)
+            
+            if (error.response) {
+                const status = error.response.status
+                const message = error.response.data?.message
+                
+                switch (status) {
+                    case 401:
+                        toast.error("Please login to view users")
+                        break
+                    case 403:
+                        toast.error("You don't have permission to view users")
+                        break
+                    case 404:
+                        toast.error("No users found")
+                        break
+                    case 500:
+                        toast.error("Server error. Please try again later")
+                        break
+                    default:
+                        toast.error(message || "Can't Find Users")
+                }
+            } else if (error.request) {
+                toast.error("Network error. Please check your connection")
+            } else {
+                toast.error("Can't Find Users")
+            }
         }
         finally {
             set({ isUserSearching: false })
@@ -36,13 +62,43 @@ export const messageStore = create((set, get) => ({
             const res = await axiosInstance.get(`/message/${id}`)
             set({ chatMessages: res.data })
 
-        } catch (error) {
-            toast.error("Cant Find Chat")
+        } catch (error: any) {
+            console.error(error)
+            
+            if (error.response) {
+                const status = error.response.status
+                const message = error.response.data?.message
+                
+                switch (status) {
+                    case 400:
+                        toast.error("Invalid user ID")
+                        break
+                    case 401:
+                        toast.error("Please login to view messages")
+                        break
+                    case 403:
+                        toast.error("You don't have permission to view this chat")
+                        break
+                    case 404:
+                        toast.error("Chat not found or user doesn't exist")
+                        break
+                    case 500:
+                        toast.error("Server error. Please try again later")
+                        break
+                    default:
+                        toast.error(message || "Can't Find Chat")
+                }
+            } else if (error.request) {
+                toast.error("Network error. Please check your connection")
+            } else {
+                toast.error("Can't Find Chat")
+            }
         }
         finally {
             set({ isMessageCollecting: false })
         }
     },
+
     sentMessage: async (id: string, data: any) => {
         set({ isSendingMessage: true })
         try {
@@ -57,9 +113,47 @@ export const messageStore = create((set, get) => ({
 
             toast.success("Message sent!")
             return true // ✅ Return success to reset form
-        } catch (error) {
+        } catch (error: any) {
             console.error(error)
-            toast.error('Can\'t Send Message')
+            
+            if (error.response) {
+                const status = error.response.status
+                const message = error.response.data?.message
+                
+                switch (status) {
+                    case 400:
+                        toast.error(message || "Invalid message format or empty message")
+                        break
+                    case 401:
+                        toast.error("Please login to send messages")
+                        break
+                    case 403:
+                        toast.error("You don't have permission to message this user")
+                        break
+                    case 404:
+                        toast.error("User not found")
+                        break
+                    case 413:
+                        toast.error("Image is too large. Please upload a smaller file")
+                        break
+                    case 415:
+                        toast.error("Unsupported file type. Please use JPG, PNG, or GIF")
+                        break
+                    case 429:
+                        toast.error("Too many messages. Please wait a moment")
+                        break
+                    case 500:
+                        toast.error("Server error. Please try again later")
+                        break
+                    default:
+                        toast.error(message || "Can't Send Message")
+                }
+            } else if (error.request) {
+                toast.error("Network error. Message not sent. Please check your connection")
+            } else {
+                toast.error('Can\'t Send Message')
+            }
+            
             return false
         } finally {
             set({ isSendingMessage: false })
