@@ -4,7 +4,7 @@ import { authStore } from '../../store/auth.store'
 import { Send, Users, MessageSquare } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Paperclip } from 'lucide-react';
+// import { Paperclip } from 'lucide-react';
 
 const HomePage = () => {
     const {
@@ -252,13 +252,13 @@ const HomePage = () => {
                                                     }
                                                 }}
                                             />
-                                            <button
+                                            {/* <button
                                                 type="button"
                                                 className="btn btn-circle btn-primary"
                                             >
 
                                                 <Paperclip className='size-5' onClick={() => document.getElementById("photoUploader")?.click()} />
-                                            </button>
+                                            </button> */}
                                             <input type="file" className='hidden' id="photoUploader"  {...register('photo')} />
 
                                             <button
