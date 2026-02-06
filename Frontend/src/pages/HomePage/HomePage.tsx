@@ -4,6 +4,7 @@ import { authStore } from '../../store/auth.store'
 import { Send, Users, MessageSquare } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import type { SendMessageData } from '../../types/types'
 // import { Paperclip } from 'lucide-react';
 
 const HomePage = () => {
@@ -22,10 +23,10 @@ const HomePage = () => {
     } = messageStore()
 
     const { authUser, onlineUsers } = authStore()
-    const { register, handleSubmit, reset } = useForm()
+    const { register, handleSubmit, reset } = useForm<SendMessageData>()
     const navigate = useNavigate()
     const { slug } = useParams()
-    const messagesEndRef = useRef(null)
+    const messagesEndRef = useRef<HTMLDivElement>(null)
     const [showOnlineOnly, setShowOnlineOnly] = useState(false)
 
     // Auto-scroll when messages change
@@ -194,15 +195,15 @@ const HomePage = () => {
                                         {chatMessages?.map((each: any) => (
                                             <div
                                                 key={each._id}
-                                                className={`chat ${each.sender === authUser._id ? 'chat-end' : 'chat-start'
+                                                className={`chat ${each.sender === authUser?._id ? 'chat-end' : 'chat-start'
                                                     }`}
                                             >
                                                 <div className="chat-image avatar">
                                                     <div className="size-10 rounded-full border">
                                                         <img
                                                             src={
-                                                                each.sender === authUser._id
-                                                                    ? authUser.profilePic || defaultProfile
+                                                                each.sender === authUser?._id
+                                                                    ? authUser?.profilePic || defaultProfile
                                                                     : currentReciver?.profilePic || defaultProfile
                                                             }
                                                             alt="profile pic"
@@ -230,7 +231,8 @@ const HomePage = () => {
                                     <form
                                         onSubmit={handleSubmit(async (data) => {
                                             if (!data.message?.trim()) return
-                                            const success = await sentMessage(currentReciver?._id, data)
+                                            const reciverId:string = currentReciver?._id
+                                            const success = await sentMessage(reciverId, data )
                                             if (success) reset()
                                         })}
                                     >

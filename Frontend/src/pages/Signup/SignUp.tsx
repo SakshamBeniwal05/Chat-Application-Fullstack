@@ -2,10 +2,11 @@ import { Eye, EyeClosed } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from "react-hook-form"
 import { authStore } from '../../store/auth.store';
+import type { SignUpData } from '../../types/types';
 const SignUpPage = () => {
     const [typePassword, setTypePassword] = useState(false);
     const { isSignningUp, signUp } = authStore()
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit } = useForm<SignUpData>()
     return (
         <>
             <div className="justify-center items-center h-screen flex lg:grid lg:grid-cols-2">

@@ -2,10 +2,11 @@ import { create } from "zustand";
 import { axiosInstance } from "../apis/axions.api";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
+import type { authStoreDataType, LoginData, SignUpData } from "../types/types";
 
-const BackEND = process.env.NODE_ENV ? "http://localhost:8000/" : "/";
+const BackEND = import.meta.env.NODE_ENV ? "http://localhost:8000/" : "/";
 
-export const authStore = create((set, get) => ({
+export const authStore = create<authStoreDataType>((set, get) => ({
     authUser: null,
     isLoggingIn: false,
     isSignningUp: false,
@@ -54,7 +55,7 @@ export const authStore = create((set, get) => ({
         }
     },
 
-    login: async (data: any) => {
+    login: async (data: LoginData) => {
         set({ isLoggingIn: true })
         try {
             const { email, password } = data
@@ -106,7 +107,7 @@ export const authStore = create((set, get) => ({
         }
     },
 
-    signUp: async (data: any) => {
+    signUp: async (data: SignUpData) => {
         set({ isSignningUp: true })
         try {
             const { userName, fullName, email, password } = data
@@ -185,15 +186,14 @@ export const authStore = create((set, get) => ({
         }
     },
 
-    updateProfile: async (photo) => {
+    updateProfile: async (photo:File) => {
         set({ isUpdatingProfile: true })
         try {
             if (!photo) return toast.error("No photo provided")
 
             await axiosInstance.post("/user/updateProfile", { file: photo })
 
-            const data = await get().checkUser()
-            set({ authUser: data })
+            await get().checkUser()
             toast.success("Profile updated successfully")
         } catch (error: any) {
             console.error("Update profile error:", error);
@@ -236,7 +236,7 @@ export const authStore = create((set, get) => ({
     },
 
     connectSocket: () => {
-        const { authUser, socket } = get()
+        const { authUser , socket } = get()
         if (!authUser || socket) return;
         const newSocket = io(BackEND, {
             query: { userId: authUser._id }

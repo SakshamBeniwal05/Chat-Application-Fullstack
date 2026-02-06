@@ -2,13 +2,14 @@ import toast from "react-hot-toast";
 import { create } from "zustand";
 import { axiosInstance } from "../apis/axions.api";
 import { authStore } from "./auth.store";
+import type { messageStoreDataType, SendMessageData } from "../types/types";
 
-export const messageStore = create((set, get) => ({
+export const messageStore = create<messageStoreDataType>((set, get) => ({
     isUserSearching: false,
     isMessageCollecting: false,
     isSendingMessage: false,
     otherUsers: [],
-    chatMessages: null,
+    chatMessages: [],
     currentReciver: null,
     currentReciverId: null,
     defaultProfile: "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg",
@@ -56,12 +57,11 @@ export const messageStore = create((set, get) => ({
         set({ currentReciver: user, currentReciverId: user?._id ?? null })
     },
     
-    getMessages: async (id: string) => {
+    getMessages: async (id) => {
         set({ isMessageCollecting: true })
         try {
             const res = await axiosInstance.get(`/message/${id}`)
             set({ chatMessages: res.data })
-
         } catch (error: any) {
             console.error(error)
             
@@ -99,12 +99,10 @@ export const messageStore = create((set, get) => ({
         }
     },
 
-    sentMessage: async (id: string, data: any) => {
+    sentMessage: async (id: string, data: SendMessageData) => {
         set({ isSendingMessage: true })
         try {
             const res = await axiosInstance.post(`/message/${id}`, data)
-
-            // ✅ Add message to sender's chat immediately
             set((state) => ({
                 chatMessages: state.chatMessages
                     ? [...state.chatMessages, res.data]
@@ -112,7 +110,7 @@ export const messageStore = create((set, get) => ({
             }))
 
             toast.success("Message sent!")
-            return true // ✅ Return success to reset form
+            return true
         } catch (error: any) {
             console.error(error)
             
