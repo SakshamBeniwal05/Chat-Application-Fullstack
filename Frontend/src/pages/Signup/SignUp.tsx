@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useForm } from "react-hook-form"
 import { authStore } from '../../store/auth.store';
 import type { SignUpData } from '../../types/types';
+import { Link } from 'react-router-dom';
 const SignUpPage = () => {
     const [typePassword, setTypePassword] = useState(false);
     const { isSignningUp, signUp } = authStore()
@@ -15,7 +16,12 @@ const SignUpPage = () => {
 
                     <div className="justify-center items-center flex flex-col gap-3">
                         <div className="text-5xl font-bold">SignUp</div>
-                        <div className="text-2xl font-medium">Already have a account? Login!</div>
+                        <div className="text-2xl font-medium">
+                            <span>Didn't have a account?</span>
+                            <Link to={"https://chat-application-fullstack-h3ip.vercel.app/login"}>
+                                <span>Login In!</span>
+                            </Link>
+                        </div>
                     </div>
 
                     <form onSubmit={handleSubmit(signUp)}>
