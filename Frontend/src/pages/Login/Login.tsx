@@ -4,10 +4,11 @@ import { useForm } from "react-hook-form"
 import { authStore } from '../../store/auth.store';
 import type { LoginData } from '../../types/types';
 import { Link } from 'react-router-dom';
+import AuthImagePattern from '../../components/Animated/Animated';
 
 const LoginPage = () => {
   const [typePassword, setTypePassword] = useState(false);
-  const { isLoggingIn,login } = authStore()
+  const { isLoggingIn, login } = authStore()
   const { register, handleSubmit } = useForm<LoginData>()
   return (
     <>
@@ -17,10 +18,10 @@ const LoginPage = () => {
 
           <div className="justify-center items-center flex flex-col gap-3">
             <div className="text-5xl font-bold">Login</div>
-            <div className="text-2xl font-medium"> 
+            <div className="text-2xl font-medium">
               <span>Didn't have a account?</span>
               <Link to={"https://chat-application-fullstack-h3ip.vercel.app/register"}>
-              <span className="text-blue-600 underline">Sign Up!</span>
+                <span className="text-blue-600 underline">Sign Up!</span>
               </Link>
             </div>
           </div>
@@ -48,6 +49,11 @@ const LoginPage = () => {
           </form>
 
         </div>
+
+        <AuthImagePattern
+          title={"Welcome back!"}
+          subtitle={"Sign in to continue your conversations and catch up with your messages."}
+        />
 
       </div>
     </>

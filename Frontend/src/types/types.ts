@@ -73,3 +73,7 @@ export type themeStoreDataType = {
     currentTheme: string,
     setTheme: (theme:string) => void
 }
+export type animatedPatternDataType = {
+    title: string,
+    subtitle: string
+}

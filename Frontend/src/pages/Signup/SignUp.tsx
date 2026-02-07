@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { authStore } from '../../store/auth.store';
 import type { SignUpData } from '../../types/types';
 import { Link } from 'react-router-dom';
+import AuthImagePattern from '../../components/Animated/Animated';
 const SignUpPage = () => {
     const [typePassword, setTypePassword] = useState(false);
     const { isSignningUp, signUp } = authStore()
@@ -54,6 +55,10 @@ const SignUpPage = () => {
                         </div>
                     </form>
                 </div>
+                <AuthImagePattern
+                    title={"Welcome back!"}
+                    subtitle={"Sign in to continue your conversations and catch up with your messages."}
+                />
             </div>
         </>
     );
