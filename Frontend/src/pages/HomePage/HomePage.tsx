@@ -261,7 +261,7 @@ const HomePage = () => {
 
                                                 <Paperclip className='size-5' onClick={() => document.getElementById("photoUploader")?.click()} />
                                             </button> */}
-                                            <input type="file" className='hidden' id="photoUploader"  {...register('photo')} />
+                                            {/* <input type="file" className='hidden' id="photoUploader"  {...register('photo')} /> */}
 
                                             <button
                                                 type="submit"

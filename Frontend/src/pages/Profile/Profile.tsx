@@ -4,7 +4,7 @@ import { authStore } from "../../store/auth.store";
 
 const ProfilePage = () => {
     const { authUser, isUpdatingProfile, updateProfile } = authStore();
-    const [selectedImg, setSelectedImg] = useState(null);
+    const [selectedImg, setSelectedImg] = useState<string | null >(null);
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -16,7 +16,7 @@ const ProfilePage = () => {
 
         reader.onload = async () => {
             const base64Image = reader.result;
-            setSelectedImg(base64Image);
+            setSelectedImg(base64Image as string);
             await updateProfile(base64Image) 
         };
     };

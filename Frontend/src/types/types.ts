@@ -35,7 +35,7 @@ export type authStoreDataType = {
     login: (data: LoginData) => Promise<void>,
     signUp: (data: SignUpData) => Promise<void>,
     logout: () => Promise<void>,
-    updateProfile: (photo: File) => Promise<void | String>,
+    updateProfile: (photo: string | ArrayBuffer | null | File) => Promise<void | String>,
     connectSocket: () => void,
 }
 
@@ -65,7 +65,7 @@ export type messageStoreDataType = {
     getUsers: () => Promise<void | string>,
     setCurrentReciever: (user: authUserDataType) => void,
     getMessages: (id:string) => Promise<void>,
-    sentMessage: (id: string, data: MessagedDataType) => Promise<Boolean>,
+    sentMessage: (id: string, data: SendMessageData) => Promise<Boolean>,
     liveMessages: () => void,
 }
 
