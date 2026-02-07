@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import type { authStoreDataType, LoginData, SignUpData } from "../types/types";
 
-const BackEND = import.meta.env.NODE_ENV ? "http://localhost:8000/" : "/";
+const BackEND = import.meta.env.NODE_ENV ? "http://localhost:8000/" : "https://chat-application-fullstack-pgs6.onrender.com/";
 
 export const authStore = create<authStoreDataType>((set, get) => ({
     authUser: null,
