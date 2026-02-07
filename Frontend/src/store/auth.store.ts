@@ -186,7 +186,7 @@ export const authStore = create<authStoreDataType>((set, get) => ({
         }
     },
 
-    updateProfile: async (photo:File) => {
+    updateProfile: async (photo: string | ArrayBuffer | null | File) => {
         set({ isUpdatingProfile: true })
         try {
             if (!photo) return toast.error("No photo provided")
