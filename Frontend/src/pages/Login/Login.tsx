@@ -20,7 +20,7 @@ const LoginPage = () => {
             <div className="text-2xl font-medium"> 
               <span>Didn't have a account?</span>
               <Link to={"https://chat-application-fullstack-h3ip.vercel.app/register"}>
-              <span>Sign Up!</span>
+              <span className="text-blue-600 underline">Sign Up!</span>
               </Link>
             </div>
           </div>
