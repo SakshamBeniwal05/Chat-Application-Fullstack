@@ -210,7 +210,7 @@ export const authStore = create<authStoreDataType>((set, get) => ({
                         toast.error("Please login to update your profile")
                         break
                     case 413:
-                        toast.error("Image is too large. Please upload a file smaller than 5MB")
+                        toast.error("Image is too large. Please upload a file smaller than 50KB")
                         break
                     case 415:
                         toast.error("Unsupported file type. Please use JPG, PNG, or GIF")
